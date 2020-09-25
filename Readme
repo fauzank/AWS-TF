@@ -1,0 +1,2 @@
+
+docker run --name tf --rm --entrypoint sh  -it hashicorp/terraform:0.12.29
