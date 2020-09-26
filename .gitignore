@@ -1,1 +1,4 @@
 .aws/
+.terraform/
+terraform.tfstate*
+aws.bat
