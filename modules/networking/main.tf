@@ -48,60 +48,60 @@ module "db_sg" {
   }]
 }
 
-resource "aws_internet_gateway" "igw" {
-  vpc_id = module.vpc.vpc_id
+# resource "aws_internet_gateway" "igw" {
+#   vpc_id = module.vpc.vpc_id
 
-  tags = {
-    Name = "${var.namespace}-IGW"
-  }
-}
+#   tags = {
+#     Name = "${var.namespace}-IGW"
+#   }
+# }
 
-resource "aws_eip" "nat" {
-  vpc = true
-  depends_on = [aws_internet_gateway.igw]
-}
+# resource "aws_eip" "nat" {
+#   vpc = true
+#   depends_on = [aws_internet_gateway.igw]
+# }
 
-resource "aws_nat_gateway" "ngw" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = "10.0.1.0/24"
+# resource "aws_nat_gateway" "ngw" {
+#   allocation_id = aws_eip.nat.id
+#   subnet_id     = "10.0.1.0/24"
 
-  tags = {
-    Name = "${var.namespace}-NGW"
-  }
-}
+#   tags = {
+#     Name = "${var.namespace}-NGW"
+#   }
+# }
 
-resource "aws_route_table" "PublicRoute" {
-  vpc_id = module.vpc.vpc_id
+# resource "aws_route_table" "PublicRoute" {
+#   vpc_id = module.vpc.vpc_id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
+#   route {
+#     cidr_block = "0.0.0.0/0"
+#     gateway_id = aws_internet_gateway.igw.id
+#   }
 
-  # route {
-  #   ipv6_cidr_block        = "::/0"
-  #   egress_only_gateway_id = aws_egress_only_internet_gateway.foo.id
-  # }
+#   # route {
+#   #   ipv6_cidr_block        = "::/0"
+#   #   egress_only_gateway_id = aws_egress_only_internet_gateway.foo.id
+#   # }
 
-  tags = {
-    Name = "${var.namespace}-PublicRoute"
-  }
-}
+#   tags = {
+#     Name = "${var.namespace}-PublicRoute"
+#   }
+# }
 
-resource "aws_route_table" "PrivateRoute" {
-  vpc_id = module.vpc.vpc_id
+# resource "aws_route_table" "PrivateRoute" {
+#   vpc_id = module.vpc.vpc_id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.ngw.id
-  }
+#   route {
+#     cidr_block = "0.0.0.0/0"
+#     nat_gateway_id = aws_nat_gateway.ngw.id
+#   }
 
-  # route {
-  #   ipv6_cidr_block        = "::/0"
-  #   egress_only_gateway_id = aws_egress_only_internet_gateway.foo.id
-  # }
+#   # route {
+#   #   ipv6_cidr_block        = "::/0"
+#   #   egress_only_gateway_id = aws_egress_only_internet_gateway.foo.id
+#   # }
 
-  tags = {
-    Name = "${var.namespace}-PublicRoute"
-  }
-}
+#   tags = {
+#     Name = "${var.namespace}-PublicRoute"
+#   }
+# }
