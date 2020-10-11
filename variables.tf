@@ -5,7 +5,7 @@ variable "namespace" {
  
 variable "ssh_keypair" {
   description = "optional ssh keypair to use for EC2 instance"
-  default     = null
+  default     = "deployer-key"
   type        = string
 }
  

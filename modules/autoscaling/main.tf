@@ -8,7 +8,8 @@ data "template_cloudinit_config" "config" {
   base64_encode = true
   part {
     content_type = "text/cloud-config"
-    content      = templatefile("${path.module}/cloud_config.yaml", var.db_config)
+    content = ""
+    # content      = templatefile("${path.module}/cloud_config.yaml", null )
   }
 }
  

@@ -8,11 +8,10 @@ module "vpc" {
   azs                              = data.aws_availability_zones.available.names
   private_subnets                  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets                   = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
-  database_subnets                 = ["10.0.21.0/24", "10.0.22.0/24", "10.0.23.0/24"]
-  assign_generated_ipv6_cidr_block = true
-  create_database_subnet_group     = true
+  assign_generated_ipv6_cidr_block = false
+  create_database_subnet_group     = false
   enable_nat_gateway               = true
-  single_nat_gateway               = true
+  single_nat_gateway               = false
 }
  
 module "lb_sg" {
@@ -38,70 +37,15 @@ module "websvr_sg" {
     }
   ]
 }
- 
-module "db_sg" {
+
+module "bastion_sg" {
   source = "scottwinkler/sg/aws"
   vpc_id = module.vpc.vpc_id
-  ingress_rules = [{
-    port            = 3306
-    security_groups = [module.websvr_sg.security_group.id]
-  }]
+  ingress_rules = [
+    {
+      port       = 22
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
 }
 
-# resource "aws_internet_gateway" "igw" {
-#   vpc_id = module.vpc.vpc_id
-
-#   tags = {
-#     Name = "${var.namespace}-IGW"
-#   }
-# }
-
-# resource "aws_eip" "nat" {
-#   vpc = true
-#   depends_on = [aws_internet_gateway.igw]
-# }
-
-# resource "aws_nat_gateway" "ngw" {
-#   allocation_id = aws_eip.nat.id
-#   subnet_id     = "10.0.1.0/24"
-
-#   tags = {
-#     Name = "${var.namespace}-NGW"
-#   }
-# }
-
-# resource "aws_route_table" "PublicRoute" {
-#   vpc_id = module.vpc.vpc_id
-
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     gateway_id = aws_internet_gateway.igw.id
-#   }
-
-#   # route {
-#   #   ipv6_cidr_block        = "::/0"
-#   #   egress_only_gateway_id = aws_egress_only_internet_gateway.foo.id
-#   # }
-
-#   tags = {
-#     Name = "${var.namespace}-PublicRoute"
-#   }
-# }
-
-# resource "aws_route_table" "PrivateRoute" {
-#   vpc_id = module.vpc.vpc_id
-
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     nat_gateway_id = aws_nat_gateway.ngw.id
-#   }
-
-#   # route {
-#   #   ipv6_cidr_block        = "::/0"
-#   #   egress_only_gateway_id = aws_egress_only_internet_gateway.foo.id
-#   # }
-
-#   tags = {
-#     Name = "${var.namespace}-PublicRoute"
-#   }
-# }
